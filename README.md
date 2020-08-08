@@ -1,2 +1,2 @@
-# hackthis-react-app
-Playing around with React apps for Illinois HackThis. 
+# hackthis-flutter-app
+Playing around with Flutter apps for Illinois HackThis. 
