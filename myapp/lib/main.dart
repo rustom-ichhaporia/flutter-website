@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:english_words/english_words.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:drawing_animation/drawing_animation.dart';
+import 'package:flutter/foundation.dart';
 
 void main() => runApp(MyApp());
 
@@ -72,7 +74,9 @@ class LogoPainter extends CustomPainter {
     Path path = Path();
     path.moveTo(500, 400);
     path.lineTo(400, 500);
-    path.addRRect(RRect.fromLTRBR(600, 600, 700, 700, Radius.circular(20)));
+    if (Platform.isIOS || Platform.isAndroid) {
+      path.addRRect(RRect.fromLTRBR(0, 0, 100, 100, Radius.circular(20)));
+    }
     path.close();
 
     canvas.drawPath(path, paint);
