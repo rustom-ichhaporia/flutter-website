@@ -54,6 +54,8 @@ flutter:
     - assets/logo.svg
     - assets/logo2.svg
     - assets/logo3.svg
+    - assets/logo4.svg
+    - assets/logo5.svg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
