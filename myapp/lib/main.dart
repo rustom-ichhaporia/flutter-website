@@ -1,10 +1,12 @@
 //import 'dart:io';
+import 'dart:async';
 import 'dart:ui';
 //import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:drawing_animation/drawing_animation.dart';
+import 'config.dart';
 //import 'package:flutter/foundation.dart';
 
 void main() => runApp(MyApp());
@@ -16,8 +18,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final myTextTheme =
         GoogleFonts.ibmPlexMonoTextTheme(Theme.of(context).textTheme).apply(
-      displayColor: Colors.amber,
-      bodyColor: Colors.amber,
+      displayColor: Color(0xffffa985).withOpacity(1),
+      bodyColor: Color(0xffffa985).withOpacity(1),
     );
     return MaterialApp(
         title: 'Personal Website',
@@ -27,6 +29,31 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: Color(0xff2c2c2c), //Colors.grey[850],
             textTheme: myTextTheme, //Colors.grey[300]),
             appBarTheme: AppBarTheme(textTheme: myTextTheme)));
+  }
+
+  void _insertOverlay(BuildContext context) {
+    return Overlay.of(context).insert(
+      OverlayEntry(builder: (context) {
+        final size = MediaQuery.of(context).size;
+        print(size.width);
+        return Positioned(
+          width: 56,
+          height: 56,
+          top: size.height - 72,
+          left: size.width - 72,
+          child: Material(
+            color: Colors.transparent,
+            child: GestureDetector(
+              onTap: () => print('ON TAP OVERLAY!'),
+              child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.redAccent),
+              ),
+            ),
+          ),
+        );
+      }),
+    );
   }
   // #enddocregion build
 }
@@ -45,10 +72,8 @@ class _LinePaintState extends State<LinePaint>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: TimeConfig.splashPageAnimationTime),
     );
-    _controller.value = 0;
-    _controller.forward();
     _controller.value = 0;
     _controller.forward();
   }
@@ -142,7 +167,7 @@ class LinePainter extends CustomPainter {
 
 class LogoAnimation extends StatefulWidget {
   @override
-  _LogoAnimationState createState() => _LogoAnimationState();
+  _LogoAnimationState createState() => new _LogoAnimationState();
 }
 
 class _LogoAnimationState extends State<LogoAnimation> {
@@ -150,6 +175,22 @@ class _LogoAnimationState extends State<LogoAnimation> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Timer _timer;
+
+  _LogoAnimationState() {
+    _timer = new Timer(Duration(seconds: TimeConfig.splashPageTime), () {
+      setState(() {});
+      Navigator.of(context).push(
+        _createRoute(),
+      );
+    });
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
   }
 
   @override
@@ -165,7 +206,7 @@ class _LogoAnimationState extends State<LogoAnimation> {
           child: AnimatedDrawing.svg(
             "assets/logo6.svg",
             run: this.run,
-            duration: new Duration(seconds: 2),
+            duration: new Duration(seconds: TimeConfig.splashPageAnimationTime),
             lineAnimation: LineAnimation.oneByOne,
             animationCurve: Curves.linear,
             onFinish: () => setState(() {
@@ -174,13 +215,85 @@ class _LogoAnimationState extends State<LogoAnimation> {
             width: 500,
           ),
         ),
-
-        // Center(
-        //     child: RaisedButton(
-        //   child: Text('Animated'),
-        //   onPressed: () {},
-        // ))
       ])),
+    );
+  }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => MainPage(),
+    transitionDuration: Duration(seconds: TimeConfig.splashPageFadeTime),
+    transitionsBuilder: (
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    ) {
+      return FadeTransition(
+        opacity:
+            new CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        child: child,
+      );
+    },
+  );
+}
+
+class MainPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: SlideInOutWidget()));
+  }
+}
+
+class SlideInOutWidget extends StatefulWidget {
+  @override
+  _SlideInOutWidgetState createState() => _SlideInOutWidgetState();
+}
+
+class _SlideInOutWidgetState extends State<SlideInOutWidget>
+    with SingleTickerProviderStateMixin {
+  double startPos = 1.0;
+  double endPos = 0.0;
+  Curve curve = Curves.elasticInOut;
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      tween: Tween<Offset>(begin: Offset(0, startPos), end: Offset(0, endPos)),
+      duration: Duration(seconds: 4),
+      curve: curve,
+      builder: (context, offset, child) {
+        return FractionalTranslation(
+          translation: offset,
+          child: Container(
+            width: double.infinity,
+            child: Center(
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: Text(
+        "Hi, I'm Rustom Ichhaporia.\nWhat's good?",
+        textScaleFactor: 3.0,
+      ),
+      onEnd: () {
+        print('onEnd');
+        Future.delayed(
+          Duration(seconds: 1),
+          () {
+            curve = curve == Curves.elasticOut
+                ? Curves.elasticIn
+                : Curves.elasticOut;
+            if (startPos == -1) {
+              setState(() {
+                startPos = 0.0;
+                endPos = 1.0;
+              });
+            }
+          },
+        );
+      },
     );
   }
 }
