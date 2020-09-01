@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:math';
+import 'dart:ui';
+//import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
-import 'package:english_words/english_words.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:drawing_animation/drawing_animation.dart';
 import 'package:flutter/foundation.dart';
@@ -20,11 +20,9 @@ class MyApp extends StatelessWidget {
       bodyColor: Colors.amber,
     );
     return MaterialApp(
-        title: 'Startup Name Generator',
+        title: 'Personal Website',
         debugShowCheckedModeBanner: false,
-        home: LinePaint(),
-        // home: RandomWords(),
-        //  theme: ThemeData.dark());
+        home: LogoAnimation(),
         theme: ThemeData(
             scaffoldBackgroundColor: Color(0xff2c2c2c), //Colors.grey[850],
             textTheme: myTextTheme, //Colors.grey[300]),
@@ -38,95 +36,232 @@ class LinePaint extends StatefulWidget {
   _LinePaintState createState() => _LinePaintState();
 }
 
-class _LinePaintState extends State<LinePaint> {
+class _LinePaintState extends State<LinePaint>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 2),
+    );
+    _controller.value = 0;
+    _controller.forward();
+    _controller.value = 0;
+    _controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Outer white container with padding
-      body: Container(
-        color: Colors.white,
-        //padding: EdgeInsets.symmetric(horizontal: 40, vertical: 80),
-        child: LayoutBuilder(
-          // Inner yellow container
-          builder: (_, constraints) => Container(
-            width: constraints.widthConstraints().maxWidth,
-            height: constraints.heightConstraints().maxHeight,
-            color: Colors.grey,
-            child: CustomPaint(painter: LogoPainter()),
-          ),
+      body: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Center(
+                        // //padding: const EdgeInsets.only(left: 0.0, right: 0.0),
+                        //child: StaggerAnimation(controller: _controller.view)
+                        child: CustomPaint(
+                          painter: LinePainter(progress: _controller.value),
+                          size: MediaQuery.of(context)
+                              .size, //Size(double.maxFinite, 100),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            // Center(
+            //   child: RaisedButton(
+            //     child: Text('Animated'),
+            //     onPressed: () {
+            //       _controller.reset();
+            //       _controller.forward();
+            //     },
+            //   ),
+            // )
+          ],
         ),
       ),
     );
   }
 }
 
-class LogoPainter extends CustomPainter {
+class LinePainter extends CustomPainter {
+  final double progress;
+
+  LinePainter({this.progress});
+
+  Paint _paint = Paint()
+    ..color = Color(0xffffa985).withOpacity(1)
+    ..strokeWidth = 50
+    ..style = PaintingStyle.stroke
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round;
+
   @override
   void paint(Canvas canvas, Size size) {
-    // Define a paint object
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 20.0
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.bevel
-      ..color = Colors.indigo;
+    // var logoPath = Path();
+    // logoPath.moveTo(size.width / 2, size.height);
+    // logoPath.lineTo(size.width / 2, size.height * (1 - progress));
+    // canvas.drawPath(logoPath, _paint);
 
-    Path path = Path();
-    path.moveTo(500, 400);
-    path.lineTo(400, 500);
-    if (Platform.isIOS || Platform.isAndroid) {
-      path.addRRect(RRect.fromLTRBR(0, 0, 100, 100, Radius.circular(20)));
-    }
-    path.close();
+    var leftDartPath = Path();
+    // leftDartPath.moveTo(0, 0);
+    // leftDartPath.lineTo(
+    //     size.width / 4 * (progress / 2), size.height / 2 * (progress / 1));
+    leftDartPath.moveTo(size.width / 4, 0);
+    leftDartPath.lineTo(size.width / 4, progress * size.height);
+    canvas.drawPath(leftDartPath, _paint);
 
-    canvas.drawPath(path, paint);
-
-    canvas.drawLine(
-      Offset(200, 200),
-      Offset(400, 400),
-      paint,
-    );
+    var rightDartPath = Path();
+    // rightDartPath.moveTo(size.width, size.height);
+    // rightDartPath.lineTo(size.width - (progress * size.width / 8),
+    //     size.height - (size.height / 2 * progress));
+    rightDartPath.moveTo(size.width * 3 / 4, size.height);
+    rightDartPath.lineTo(size.width * 3 / 4, size.height * (1 - progress));
+    canvas.drawPath(rightDartPath, _paint);
   }
 
   @override
-  bool shouldRepaint(LogoPainter oldDelegate) => false;
+  bool shouldRepaint(LinePainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
 }
 
-// class LogoAnimation extends StatefulWidget {
-//   @override
-//   _LogoAnimationState createState() => _LogoAnimationState();
-// }
+class LogoAnimation extends StatefulWidget {
+  @override
+  _LogoAnimationState createState() => _LogoAnimationState();
+}
 
-// class _LogoAnimationState extends State<LogoAnimation> {
-//   bool run = true;
-//   @override
-//   void initState() {
-//     super.initState();
+class _LogoAnimationState extends State<LogoAnimation> {
+  bool run = true;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: new Stack(children: <Widget>[
+        //Simplfied AnimatedDrawing parsing Path objects from an Svg asset
+        Expanded(
+          child: LinePaint(),
+        ),
+        Expanded(
+          child: AnimatedDrawing.svg(
+            "assets/logo6.svg",
+            run: this.run,
+            duration: new Duration(seconds: 2),
+            lineAnimation: LineAnimation.oneByOne,
+            animationCurve: Curves.linear,
+            onFinish: () => setState(() {
+              this.run = false;
+            }),
+            width: 500,
+          ),
+        ),
+
+        // Center(
+        //     child: RaisedButton(
+        //   child: Text('Animated'),
+        //   onPressed: () {},
+        // ))
+      ])),
+    );
+  }
+}
+
+// class StaggerAnimation extends StatelessWidget {
+//   StaggerAnimation({Key key, this.controller})
+//       :
+
+//         // Each animation defined here transforms its value during the subset
+//         // of the controller's duration defined by the animation's interval.
+//         // For example the opacity animation transforms its value during
+//         // the first 10% of the controller's duration.
+
+//         opacity = Tween<double>(
+//           begin: 0.0,
+//           end: 1.0,
+//         ).animate(
+//           CurvedAnimation(
+//             parent: controller,
+//             curve: Interval(
+//               0.0,
+//               0.100,
+//               curve: Curves.ease,
+//             ),
+//           ),
+//         ),
+//         width = Tween<double>(
+//           begin: 50.0,
+//           end: 150.0,
+//         ).animate(
+//           CurvedAnimation(
+//             parent: controller,
+//             curve: Interval(
+//               0.125,
+//               0.250,
+//               curve: Curves.ease,
+//             ),
+//           ),
+//         ),
+//         height = Tween<double>(begin: 50.0, end: 150.0).animate(
+//           CurvedAnimation(
+//             parent: controller,
+//             curve: Interval(
+//               0.250,
+//               0.375,
+//               curve: Curves.ease,
+//             ),
+//           ),
+//         ),
+//         super(key: key);
+
+//   final Animation<double> controller;
+//   final Animation<double> opacity;
+//   final Animation<double> width;
+//   final Animation<double> height;
+
+//   // This function is called each time the controller "ticks" a new frame.
+//   // When it runs, all of the animation's values will have been
+//   // updated to reflect the controller's current value.
+//   Widget _buildAnimation(BuildContext context, Widget child) {
+//     return Container(
+//       alignment: Alignment.bottomCenter,
+//       child: Opacity(
+//         opacity: opacity.value,
+//         child: Container(
+//           width: width.value,
+//           height: height.value,
+//           // child: //Curves.slowMiddle(),
+//           // decoration: BoxDecoration(
+//           //   color: Color(0xffffa985).withOpacity(1),
+//           // ),
+//         ),
+//       ),
+//     );
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       floatingActionButton: FloatingActionButton(
-//           onPressed: () => setState(() {
-//                 this.run = !this.run;
-//               }),
-//           child: Icon((this.run) ? Icons.stop : Icons.play_arrow)),
-//       body: Center(
-//           child: Column(children: <Widget>[
-//         //Simplfied AnimatedDrawing parsing Path objects from an Svg asset
-//         Expanded(
-//             child: AnimatedDrawing.svg(
-//           "assets/logo5.svg",
-//           run: this.run,
-//           duration: new Duration(seconds: 7),
-//           lineAnimation: LineAnimation.oneByOne,
-//           animationCurve: Curves.linear,
-//           onFinish: () => setState(() {
-//             this.run = false;
-//           }),
-//         )),
-//       ])),
+//     return AnimatedBuilder(
+//       builder: _buildAnimation,
+//       animation: controller,
 //     );
 //   }
 // }
