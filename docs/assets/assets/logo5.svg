@@ -1,1 +1,8 @@
-<svg height="2000" viewBox="0 0 1500 1500" width="2000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><clipPath id="a"><path d="m0 0h1500v1500h-1500"/></clipPath><g clip-path="url(#a)" fill="none"><path d="m0 0h1500v1500h-1500z"/><path d="m524.5 929.75v-449.5h447.5l-269 268.5 272.5 271" stroke="#ffa985" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="3" stroke-width="110"/></g></svg>
+<svg height="2000" viewBox="0 0 1500 1500" width="2000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<clipPath id="a">
+<path d="m0 0h1500v1500h-1500"/>
+</clipPath>
+<g clip-path="url(#a)" fill="none">
+<path d="m524.5 929.75v-449.5h447.5l-269 268.5 272.5 271" stroke="#ffa985" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="3" stroke-width="110"/>
+</g>
+</svg>
