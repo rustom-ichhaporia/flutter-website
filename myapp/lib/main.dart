@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/animation.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:drawing_animation/drawing_animation.dart';
+import 'package:drawing_animation/drawing_animation.dart';
 //import 'package:flutter/foundation.dart';
 
 void main() => runApp(MyApp());
@@ -158,22 +158,22 @@ class _LogoAnimationState extends State<LogoAnimation> {
       body: Center(
           child: new Stack(children: <Widget>[
         //Simplfied AnimatedDrawing parsing Path objects from an Svg asset
-        Expanded(
+        Container(
           child: LinePaint(),
         ),
-        // Expanded(
-        //   child: AnimatedDrawing.svg(
-        //     "assets/logo6.svg",
-        //     run: this.run,
-        //     duration: new Duration(seconds: 2),
-        //     lineAnimation: LineAnimation.oneByOne,
-        //     animationCurve: Curves.linear,
-        //     onFinish: () => setState(() {
-        //       this.run = false;
-        //     }),
-        //     width: 500,
-        //   ),
-        // ),
+        Container(
+          child: AnimatedDrawing.svg(
+            "assets/logo6.svg",
+            run: this.run,
+            duration: new Duration(seconds: 2),
+            lineAnimation: LineAnimation.oneByOne,
+            animationCurve: Curves.linear,
+            onFinish: () => setState(() {
+              this.run = false;
+            }),
+            width: 500,
+          ),
+        ),
 
         // Center(
         //     child: RaisedButton(
