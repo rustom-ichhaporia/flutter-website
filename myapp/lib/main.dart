@@ -276,7 +276,7 @@ class _SlideInOutWidgetState extends State<SlideInOutWidget>
         );
       },
       child: Text(
-        "Hi, I'm Rustom Ichhaporia.\nWhat's good?",
+        "Hi, I'm Rustom Ichhaporia.\nThis website is under construction, and a new iteration will be out soon.",
         textScaleFactor: 3.0,
       ),
       onEnd: () {
